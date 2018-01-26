@@ -28,7 +28,7 @@
     cursors.fire = game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);
     cursors.fire.onUp.add(handlePlayerFire);
 
-    player = game.add.sprite(100, 100, GFX, 8);
+    player = game.add.sprite(200, 400, GFX, 8);
     player.moveSpeed = INITIAL_MOVESPEED;
     playerBullets = game.add.group();
   };
@@ -37,6 +37,8 @@
   function update() {
     handlePlayerMovement();
     handleBulletAnimations();
+
+    cleanup();
   };
 
   //handler function 
@@ -67,6 +69,7 @@
     }
   };
 
+  //handler functions
   function handlePlayerFire() {
     playerBullets.add(game.add.sprite(player.x, player.y, GFX, 7));
   };
@@ -74,6 +77,16 @@
   function handleBulletAnimations() {
     playerBullets.children.forEach(bullet => bullet.y -= PLAYER_BULLET_SPEED);
   };
+
+  //utilities functions
+  function cleanup() {
+    playerBullets.children
+      .filter( bullet => bullet.y < -14 )
+      .forEach( bullet => bullet.destroy() );
+  };
+
+
+
 
 
 })(window.Phaser);
