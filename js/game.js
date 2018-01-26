@@ -42,10 +42,10 @@
   function update() {
     handlePlayerMovement();
     handleBulletAnimations();
-
     cleanup();
     randomlySpawnEnemy();
     handleEnemyActions();
+    handleCollisions();
   };
 
   //handler function 
@@ -96,6 +96,26 @@
     enemies.children.forEach( enemy => enemy.y += ENEMY_SPEED );
   };
 
+  function handleCollisions() {
+    // check if any bullets touch any enemies
+    let enemiesHit = enemies.children
+      .filter( enemy => enemy.alive )
+      .filter( enemy => 
+        playerBullets.children.some( 
+          bullet => enemy.overlap(bullet) 
+        ) 
+      );
+
+    if( enemiesHit.length ){
+      // clean up bullets that land
+      playerBullets.children
+        .filter( bullet => bullet.overlap(enemies) )
+        .forEach( removeBullet );
+
+      enemiesHit.forEach( destroyEnemy );
+    }
+  };
+
   //utilities functions
   function cleanup() {
     playerBullets.children
@@ -103,7 +123,13 @@
       .forEach( bullet => bullet.destroy() );
   };
 
+  function removeBullet(bullet) {
+    bullet.destroy();
+  }
 
+  function destroyEnemy(enemy) {
+    enemy.kill();
+  }
 
 
 
