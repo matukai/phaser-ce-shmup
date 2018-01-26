@@ -74,6 +74,14 @@
         player.y -= player.moveSpeed;
         break;
     }
+    enemiesHit = enemies.children
+      .filter(enemy => enemy.overlap(player));
+
+    if (enemiesHit.length) {
+      handlePlayerHit();
+
+      enemiesHit.forEach(destroyEnemy);
+    }
   };
 
   //handler functions
@@ -86,41 +94,47 @@
   };
   //
   function randomlySpawnEnemy() {
-    if(randomGenerator.between(0, ENEMY_SPAWN_FREQ) === 0) {
+    if (randomGenerator.between(0, ENEMY_SPAWN_FREQ) === 0) {
       let randomX = randomGenerator.between(0, GAME_WIDTH);
-      enemies.add( game.add.sprite(randomX, -24, GFX, 0));
+      enemies.add(game.add.sprite(randomX, -24, GFX, 0));
     }
   }
 
   function handleEnemyActions() {
-    enemies.children.forEach( enemy => enemy.y += ENEMY_SPEED );
+    enemies.children.forEach(enemy => enemy.y += ENEMY_SPEED);
   };
 
   function handleCollisions() {
     // check if any bullets touch any enemies
     let enemiesHit = enemies.children
-      .filter( enemy => enemy.alive )
-      .filter( enemy => 
-        playerBullets.children.some( 
-          bullet => enemy.overlap(bullet) 
-        ) 
+      .filter(enemy => enemy.alive)
+      .filter(enemy =>
+        playerBullets.children.some(
+          bullet => enemy.overlap(bullet)
+        )
       );
 
-    if( enemiesHit.length ){
+    if (enemiesHit.length) {
       // clean up bullets that land
       playerBullets.children
-        .filter( bullet => bullet.overlap(enemies) )
-        .forEach( removeBullet );
+        .filter(bullet => bullet.overlap(enemies))
+        .forEach(removeBullet);
 
-      enemiesHit.forEach( destroyEnemy );
+      enemiesHit.forEach(destroyEnemy);
     }
   };
+
+  function handlePlayerHit() {
+    gameOver();
+  };
+
+
 
   //utilities functions
   function cleanup() {
     playerBullets.children
-      .filter( bullet => bullet.y < -14 )
-      .forEach( bullet => bullet.destroy() );
+      .filter(bullet => bullet.y < -14)
+      .forEach(bullet => bullet.destroy());
   };
 
   function removeBullet(bullet) {
@@ -131,6 +145,9 @@
     enemy.kill();
   }
 
-
+  function gameOver() {
+    game.state.destroy();
+    game.add.text(90, 200, 'YOUR HEAD ASPLODE', { fill: '#FFFFFF' });
+  };
 
 })(window.Phaser);
