@@ -6,6 +6,7 @@
   const GFX = 'gfx';
   const INITIAL_MOVESPEED = 4;
 
+  const PLAYER_BULLET_SPEED = 6;
   const SQRT_TWO = Math.sqrt(2);
   const game = new Phaser.Game(GAME_WIDTH, GAME_HEIGHT, Phaser.AUTO, GAME_CONTAINER_ID, {
     preload,
@@ -25,7 +26,7 @@
   function create() {
     cursors = game.input.keyboard.createCursorKeys();
     cursors.fire = game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);
-    cursors.fire.onUp.add( handlePlayerFire );
+    cursors.fire.onUp.add(handlePlayerFire);
 
     player = game.add.sprite(100, 100, GFX, 8);
     player.moveSpeed = INITIAL_MOVESPEED;
@@ -35,6 +36,7 @@
   //runs every 60 secs
   function update() {
     handlePlayerMovement();
+    handleBulletAnimations();
   };
 
   //handler function 
@@ -66,9 +68,12 @@
   };
 
   function handlePlayerFire() {
-    playerBullets.add( game.add.sprite(player.x, player.y, GFX, 7) );
-   };
+    playerBullets.add(game.add.sprite(player.x, player.y, GFX, 7));
+  };
 
+  function handleBulletAnimations() {
+    playerBullets.children.forEach(bullet => bullet.y -= PLAYER_BULLET_SPEED);
+  };
 
 
 })(window.Phaser);
